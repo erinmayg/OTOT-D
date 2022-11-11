@@ -1,0 +1,74 @@
+services:
+  # Zookeepers
+  zoo-1:
+    image: confluentinc/cp-zookeeper
+    hostname: zoo-1
+    ports:
+      - '12181:12181'
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 12181
+      ZOOKEEPER_SERVERS: zoo-1:12888:13888;zoo-2:22888:23888;zoo-3:32888:33888
+
+  zoo-2:
+    image: confluentinc/cp-zookeeper
+    hostname: zoo-2
+    ports:
+      - '12182:12182'
+    environment:
+      ZOOKEEPER_SERVER_ID: 2
+      ZOOKEEPER_CLIENT_PORT: 12182
+      ZOOKEEPER_SERVERS: zoo-1:12888:13888;zoo-2:22888:23888;zoo-3:32888:33888
+
+  zoo-3:
+    image: confluentinc/cp-zookeeper
+    hostname: zoo-3
+    ports:
+      - '12183:12183'
+    environment:
+      ZOOKEEPER_SERVER_ID: 3
+      ZOOKEEPER_CLIENT_PORT: 12183
+      ZOOKEEPER_SERVERS: zoo-1:12888:13888;zoo-2:22888:23888;zoo-3:32888:33888
+
+  # Kafkas
+  kafka-1:
+    image: confluentinc/cp-kafka
+    hostname: kafka-1
+    ports:
+      - '19092:19092'
+    depends_on:
+      - zoo-1
+      - zoo-2
+      - zoo-3
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zoo-1:12181,zoo-2:12181,zoo-3:12181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:19092
+
+  kafka-2:
+    image: confluentinc/cp-kafka
+    hostname: kafka-2
+    ports:
+      - '19093:19093'
+    depends_on:
+      - zoo-1
+      - zoo-2
+      - zoo-3
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zoo-1:12181,zoo-2:12181,zoo-3:12181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-2:19093
+
+  kafka-3:
+    image: confluentinc/cp-kafka
+    hostname: kafka-3
+    ports:
+      - '19094:19094'
+    depends_on:
+      - zoo-1
+      - zoo-2
+      - zoo-3
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: zoo-1:12181,zoo-2:12181,zoo-3:12181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-3:19094
